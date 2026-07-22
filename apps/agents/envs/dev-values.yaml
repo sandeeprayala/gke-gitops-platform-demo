@@ -1,18 +1,20 @@
-environment: dev
-replicaCount: 1
+nameOverride: agent
 image:
-  digest: sha256:DEV_AGENTS_IMAGE_DIGEST
+  repository: us-central1-docker.pkg.dev/demo-project/app-images/agent
+  tag: dev-latest
+replicaCount: 1
+service:
+  port: 8080
 resources:
   requests:
     cpu: 250m
-    memory: 512Mi
+    memory: 256Mi
   limits:
-    cpu: 1000m
-    memory: 1Gi
-autoscaling:
-  enabled: true
-  minReplicas: 1
-  maxReplicas: 2
-  targetCPUUtilizationPercentage: 65
-ingress:
-  enabled: false
+    cpu: 500m
+    memory: 512Mi
+env:
+  APP_ENV: dev
+  BACKEND_URL: http://backend.backend-dev.svc.cluster.local:8000
+  LANGFUSE_HOST: http://langfuse.platform-dev.svc.cluster.local
+  TEMPORAL_HOST: temporal-frontend.platform-dev.svc.cluster.local:7233
+

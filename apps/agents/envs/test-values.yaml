@@ -1,18 +1,20 @@
-environment: test
-replicaCount: 2
+nameOverride: agent
 image:
-  digest: sha256:TEST_AGENTS_IMAGE_DIGEST
+  repository: us-central1-docker.pkg.dev/demo-project/app-images/agent
+  tag: test-approved
+replicaCount: 2
+service:
+  port: 8080
 resources:
   requests:
     cpu: 500m
-    memory: 1Gi
+    memory: 512Mi
   limits:
-    cpu: 1500m
-    memory: 1536Mi
-autoscaling:
-  enabled: true
-  minReplicas: 2
-  maxReplicas: 4
-  targetCPUUtilizationPercentage: 65
-ingress:
-  enabled: false
+    cpu: 1000m
+    memory: 1Gi
+env:
+  APP_ENV: test
+  BACKEND_URL: http://backend.backend-test.svc.cluster.local:8000
+  LANGFUSE_HOST: http://langfuse.platform-test.svc.cluster.local
+  TEMPORAL_HOST: temporal-frontend.platform-test.svc.cluster.local:7233
+
