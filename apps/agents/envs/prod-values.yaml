@@ -1,18 +1,20 @@
-environment: prod
-replicaCount: 3
+nameOverride: agent
 image:
-  digest: sha256:PROD_AGENTS_IMAGE_DIGEST
+  repository: us-central1-docker.pkg.dev/demo-project/app-images/agent
+  tag: prod-approved
+replicaCount: 3
+service:
+  port: 8080
 resources:
   requests:
-    cpu: 750m
-    memory: 1536Mi
+    cpu: 1000m
+    memory: 1Gi
   limits:
     cpu: 2000m
     memory: 2Gi
-autoscaling:
-  enabled: true
-  minReplicas: 3
-  maxReplicas: 6
-  targetCPUUtilizationPercentage: 60
-ingress:
-  enabled: false
+env:
+  APP_ENV: prod
+  BACKEND_URL: http://backend.backend-prod.svc.cluster.local:8000
+  LANGFUSE_HOST: http://langfuse.platform-prod.svc.cluster.local
+  TEMPORAL_HOST: temporal-frontend.platform-prod.svc.cluster.local:7233
+

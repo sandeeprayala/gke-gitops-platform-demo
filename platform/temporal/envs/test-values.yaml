@@ -1,0 +1,7 @@
+server:
+  replicaCount: 2
+web:
+  replicaCount: 1
+prometheus:
+  enabled: true
+

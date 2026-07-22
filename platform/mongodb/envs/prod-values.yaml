@@ -1,0 +1,15 @@
+fullnameOverride: mongodb
+auth:
+  enabled: true
+architecture: replicaset
+resources:
+  requests:
+    cpu: 1000m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+persistence:
+  enabled: true
+  size: 50Gi
+

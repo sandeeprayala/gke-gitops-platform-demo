@@ -1,38 +1,47 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: test-workloads
+  name: test-applications
   namespace: argocd
 spec:
   generators:
-    - git:
-        repoURL: https://github.com/org/gitops-platform.git
-        revision: main
-        directories:
-          - path: apps/*
-          - path: platform/*
+    - list:
+        elements:
+          - name: frontend
+            path: apps/frontend
+            namespace: frontend-test
+          - name: backend
+            path: apps/backend
+            namespace: backend-test
+          - name: agents
+            path: apps/agents
+            namespace: agents-test
+          - name: mongodb
+            path: platform/mongodb
+            namespace: platform-test
+          - name: temporal
+            path: platform/temporal
+            namespace: platform-test
+          - name: langfuse
+            path: platform/langfuse
+            namespace: platform-test
   template:
     metadata:
-      name: '{{path.basename}}-test'
-      labels:
-        env: test
-        managed-by: argocd
+      name: 'test-{{name}}'
     spec:
-      project: platform-test
+      project: default
       source:
-        repoURL: https://github.com/org/gitops-platform.git
-        targetRevision: main
-        path: '{{path}}/base'
+        repoURL: https://github.com/sandeeprayala/gke-gitops-platform-demo.git
+        targetRevision: feature/gitops-argocd-helm-restructure
+        path: '{{path}}'
         helm:
           valueFiles:
-            - ../envs/test-values.yaml
+            - envs/test-values.yaml
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{path.basename}}-test'
+        namespace: '{{namespace}}'
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
-        syncOptions:
-          - CreateNamespace=true
-          - ApplyOutOfSyncOnly=true
+

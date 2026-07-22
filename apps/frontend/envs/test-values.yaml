@@ -1,20 +1,20 @@
-environment: test
-replicaCount: 2
+nameOverride: frontend
 image:
-  digest: sha256:TEST_FRONTEND_IMAGE_DIGEST
+  repository: us-central1-docker.pkg.dev/demo-project/app-images/frontend
+  tag: test-approved
+replicaCount: 2
+service:
+  port: 80
 ingress:
   enabled: true
-  host: frontend.test.example.com
-  annotations: {}
+  host: frontend-test.example.com
 resources:
   requests:
-    cpu: 100m
+    cpu: 200m
     memory: 256Mi
   limits:
     cpu: 500m
     memory: 512Mi
-autoscaling:
-  enabled: true
-  minReplicas: 2
-  maxReplicas: 4
-  targetCPUUtilizationPercentage: 70
+env:
+  APP_ENV: test
+

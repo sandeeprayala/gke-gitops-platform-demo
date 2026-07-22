@@ -1,20 +1,20 @@
-environment: prod
-replicaCount: 3
+nameOverride: frontend
 image:
-  digest: sha256:PROD_FRONTEND_IMAGE_DIGEST
+  repository: us-central1-docker.pkg.dev/demo-project/app-images/frontend
+  tag: prod-approved
+replicaCount: 3
+service:
+  port: 80
 ingress:
   enabled: true
-  host: frontend.prod.example.com
-  annotations: {}
+  host: frontend.example.com
 resources:
   requests:
-    cpu: 200m
+    cpu: 300m
     memory: 256Mi
   limits:
     cpu: 1000m
-    memory: 1Gi
-autoscaling:
-  enabled: true
-  minReplicas: 3
-  maxReplicas: 6
-  targetCPUUtilizationPercentage: 65
+    memory: 512Mi
+env:
+  APP_ENV: prod
+
