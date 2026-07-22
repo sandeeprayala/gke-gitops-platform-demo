@@ -1,35 +1,43 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: prod-workloads
+  name: prod-applications
   namespace: argocd
 spec:
   generators:
-    - git:
-        repoURL: https://github.com/org/gitops-platform.git
-        revision: main
-        directories:
-          - path: apps/*
-          - path: platform/*
+    - list:
+        elements:
+          - name: frontend
+            path: apps/frontend
+            namespace: frontend-prod
+          - name: backend
+            path: apps/backend
+            namespace: backend-prod
+          - name: agents
+            path: apps/agents
+            namespace: agents-prod
+          - name: mongodb
+            path: platform/mongodb
+            namespace: platform-prod
+          - name: temporal
+            path: platform/temporal
+            namespace: platform-prod
+          - name: langfuse
+            path: platform/langfuse
+            namespace: platform-prod
   template:
     metadata:
-      name: '{{path.basename}}-prod'
-      labels:
-        env: prod
-        managed-by: argocd
+      name: 'prod-{{name}}'
     spec:
-      project: platform-prod
+      project: default
       source:
-        repoURL: https://github.com/org/gitops-platform.git
-        targetRevision: main
-        path: '{{path}}/base'
+        repoURL: https://github.com/sandeeprayala/gke-gitops-platform-demo.git
+        targetRevision: feature/gitops-argocd-helm-restructure
+        path: '{{path}}'
         helm:
           valueFiles:
-            - ../envs/prod-values.yaml
+            - envs/prod-values.yaml
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{path.basename}}-prod'
-      syncPolicy:
-        syncOptions:
-          - CreateNamespace=true
-          - ApplyOutOfSyncOnly=true
+        namespace: '{{namespace}}'
+
