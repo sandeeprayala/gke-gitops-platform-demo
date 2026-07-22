@@ -1,36 +1,36 @@
 # GKE GitOps Platform Demo
 
-This repository demonstrates a multi-environment GitOps deployment model for GKE using Argo CD and Helm, with a structure designed for reusable application charts, shared platform standards, and environment-specific configuration for dev, test, and prod. It shows how Argo CD ApplicationSets, AppProjects, and a shared Helm library chart can be organized to support scalable, production-style Kubernetes delivery for frontend, backend, and agent-based services.
+This repository demonstrates a GitOps delivery model using Argo CD, Helm, and environment-specific promotion across dev, test, and prod.
 
-## Repository Structure
+## Structure
 
-- `argocd/` contains the Argo CD bootstrap application, ApplicationSets, and AppProjects.
-- `charts/amex-library/` contains shared Helm templates for labels, probes, security context, and resource defaults.
-- `apps/frontend/`, `apps/backend/`, and `apps/agents/` contain the service-specific Helm charts and environment values for dev, test, and prod.
-- `platform/` is reserved for shared platform services such as MongoDB, Temporal, and Langfuse.
+- `bootstrap/` contains the Argo CD root application.
+- `argocd/applicationsets/` contains environment-specific ApplicationSets.
+- `apps/` contains application deployment definitions for frontend, backend, and agents.
+- `platform/` contains shared platform components such as MongoDB, Temporal, and Langfuse.
+- `charts/` contains a shared Helm library chart and per-component charts.
 
-## How Deployments Work
+## Delivery model
 
-Each service is deployed through Argo CD ApplicationSets that point to a shared Helm chart base and environment-specific values files. CI builds immutable container images, updates the GitOps repository with the new image digest, and Argo CD reconciles the desired state into the target GKE environment. Dev and test are configured for automated sync, while prod is kept approval-driven for controlled releases.
+- Dev uses auto-sync, self-heal, and prune.
+- Test is promoted by Git PR and synced after merge.
+- Prod is promoted by Git PR with approval and controlled sync.
 
-## Key Components
+## Helm approach
 
-- **Argo CD** manages GitOps-based deployment and environment promotion.
-- **Helm** provides reusable chart templates and environment-specific configuration.
-- **GKE** is the runtime platform for all workloads.
-- **Cloud Build** handles CI, image build, validation, and security checks.
-- **Shared platform services** such as MongoDB, Temporal, and Langfuse are managed separately from application charts.
+- One chart per deployable unit.
+- One shared library chart for common labels and standards.
+- Environment differences are handled through `dev-values.yaml`, `test-values.yaml`, and `prod-values.yaml`.
 
-## Environments
+## Shared services
 
-- **Dev** uses automated sync with self-heal and prune for fast feedback.
-- **Test** uses promotion-based deployment with automated reconciliation after merge.
-- **Prod** uses controlled promotion and manual or gated sync for release safety.
+MongoDB, Temporal, and Langfuse are managed as standalone platform components rather than being embedded inside application charts.
 
-## Notes
+## Promotion flow
 
-This repository is a design and implementation demo intended to show GitOps repository organization, Helm chart structure, and Argo CD deployment patterns. Placeholder values such as Git repository URLs, hostnames, image digests, and secret names should be replaced before using this in a real environment.
+1. CI builds immutable images.
+2. CI updates GitOps values for dev.
+3. Argo CD syncs dev.
+4. The same artifact is promoted to test by PR.
+5. The same artifact is promoted to prod by approval-based PR.
 
-## Goal
-
-This repository is intended as a practical reference for building secure, repeatable, multi-environment Kubernetes delivery pipelines using GitOps principles.
