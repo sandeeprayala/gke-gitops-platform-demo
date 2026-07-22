@@ -1,0 +1,20 @@
+environment: prod
+replicaCount: 3
+image:
+  digest: sha256:PROD_FRONTEND_IMAGE_DIGEST
+ingress:
+  enabled: true
+  host: frontend.prod.example.com
+  annotations: {}
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 65

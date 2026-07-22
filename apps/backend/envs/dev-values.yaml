@@ -1,0 +1,22 @@
+environment: dev
+replicaCount: 1
+image:
+  digest: sha256:DEV_BACKEND_IMAGE_DIGEST
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+autoscaling:
+  enabled: false
+ingress:
+  enabled: false
+secrets:
+  mongodb:
+    existingSecret: mongodb-conn-dev
+  temporal:
+    existingSecret: temporal-conn-dev
+  langfuse:
+    existingSecret: langfuse-conn-dev

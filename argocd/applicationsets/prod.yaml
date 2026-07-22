@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: prod-workloads
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/org/gitops-platform.git
+        revision: main
+        directories:
+          - path: apps/*
+          - path: platform/*
+  template:
+    metadata:
+      name: '{{path.basename}}-prod'
+      labels:
+        env: prod
+        managed-by: argocd
+    spec:
+      project: platform-prod
+      source:
+        repoURL: https://github.com/org/gitops-platform.git
+        targetRevision: main
+        path: '{{path}}/base'
+        helm:
+          valueFiles:
+            - ../envs/prod-values.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}-prod'
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true

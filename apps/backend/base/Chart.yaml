@@ -1,0 +1,10 @@
+apiVersion: v2
+name: backend
+description: Backend service (FastAPI / Google ADK) for the Insights agentic platform
+type: application
+version: 0.1.0
+appVersion: "1.0"
+dependencies:
+  - name: amex-library
+    version: 0.1.0
+    repository: "file://../../../charts/amex-library"

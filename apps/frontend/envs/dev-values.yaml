@@ -1,0 +1,20 @@
+environment: dev
+replicaCount: 1
+image:
+  digest: sha256:DEV_FRONTEND_IMAGE_DIGEST
+ingress:
+  enabled: true
+  host: frontend.dev.example.com
+  annotations: {}
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 250m
+    memory: 256Mi
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 70

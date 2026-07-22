@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: test-workloads
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/org/gitops-platform.git
+        revision: main
+        directories:
+          - path: apps/*
+          - path: platform/*
+  template:
+    metadata:
+      name: '{{path.basename}}-test'
+      labels:
+        env: test
+        managed-by: argocd
+    spec:
+      project: platform-test
+      source:
+        repoURL: https://github.com/org/gitops-platform.git
+        targetRevision: main
+        path: '{{path}}/base'
+        helm:
+          valueFiles:
+            - ../envs/test-values.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}-test'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true

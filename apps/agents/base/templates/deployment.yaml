@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-agents
+  labels:
+    {{- include "amex.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "amex.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "amex.labels" . | nindent 8 }}
+    spec:
+      securityContext:
+        {{- include "amex.podSecurityContext" . | nindent 8 }}
+      containers:
+        - name: agents
+          image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- include "amex.containerSecurityContext" . | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          livenessProbe:
+            {{- include "amex.livenessProbe" . | nindent 12 }}
+          readinessProbe:
+            {{- include "amex.readinessProbe" . | nindent 12 }}
+          resources:
+            {{- include "amex.resources" . | nindent 12 }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.secrets.mongodb.existingSecret }}
+            - secretRef:
+                name: {{ .Values.secrets.temporal.existingSecret }}
+            - secretRef:
+                name: {{ .Values.secrets.langfuse.existingSecret }}

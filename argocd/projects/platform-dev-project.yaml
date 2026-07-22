@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: platform-dev
+  namespace: argocd
+spec:
+  description: Dev environment project for app and platform workloads
+  sourceRepos:
+    - 'https://github.com/org/gitops-platform.git'
+  destinations:
+    - namespace: '*-dev'
+      server: 'https://kubernetes.default.svc'
+    - namespace: 'platform-dev'
+      server: 'https://kubernetes.default.svc'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  roles:
+    - name: developers
+      description: Read-only access for developers in dev
+      policies:
+        - p, proj:platform-dev:developers, applications, get, platform-dev/*, allow
+        - p, proj:platform-dev:developers, applications, sync, platform-dev/*, allow
+      groups:
+        - developers

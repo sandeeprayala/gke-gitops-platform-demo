@@ -1,0 +1,56 @@
+environment: dev
+
+image:
+  repository: us-docker.pkg.dev/PROJECT_ID/insights/backend
+  digest: ""
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 8080
+
+probes:
+  liveness:
+    path: /healthz
+    port: 8080
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readiness:
+    path: /ready
+    port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 70
+
+ingress:
+  enabled: false
+  className: gce
+  host: backend.dev.example.com
+  annotations: {}
+
+secrets:
+  mongodb:
+    existingSecret: mongodb-conn
+  temporal:
+    existingSecret: temporal-conn
+  langfuse:
+    existingSecret: langfuse-conn
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

@@ -1,0 +1,25 @@
+environment: prod
+replicaCount: 3
+image:
+  digest: sha256:PROD_BACKEND_IMAGE_DIGEST
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 65
+ingress:
+  enabled: false
+secrets:
+  mongodb:
+    existingSecret: mongodb-conn-prod
+  temporal:
+    existingSecret: temporal-conn-prod
+  langfuse:
+    existingSecret: langfuse-conn-prod

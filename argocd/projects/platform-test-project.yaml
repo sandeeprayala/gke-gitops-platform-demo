@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: platform-test
+  namespace: argocd
+spec:
+  description: Test environment project for app and platform workloads
+  sourceRepos:
+    - 'https://github.com/org/gitops-platform.git'
+  destinations:
+    - namespace: '*-test'
+      server: 'https://kubernetes.default.svc'
+    - namespace: 'platform-test'
+      server: 'https://kubernetes.default.svc'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  roles:
+    - name: qa-platform
+      description: Sync access for test promotions
+      policies:
+        - p, proj:platform-test:qa-platform, applications, get, platform-test/*, allow
+        - p, proj:platform-test:qa-platform, applications, sync, platform-test/*, allow
+      groups:
+        - qa-platform

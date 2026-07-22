@@ -1,0 +1,18 @@
+environment: prod
+replicaCount: 3
+image:
+  digest: sha256:PROD_AGENTS_IMAGE_DIGEST
+resources:
+  requests:
+    cpu: 750m
+    memory: 1536Mi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 60
+ingress:
+  enabled: false

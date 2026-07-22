@@ -1,0 +1,56 @@
+environment: dev
+
+image:
+  repository: us-docker.pkg.dev/PROJECT_ID/insights/agent-orchestrator
+  digest: ""
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 8081
+
+probes:
+  liveness:
+    path: /healthz
+    port: 8081
+    initialDelaySeconds: 30
+    periodSeconds: 30
+  readiness:
+    path: /ready
+    port: 8081
+    initialDelaySeconds: 10
+    periodSeconds: 15
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 65
+
+ingress:
+  enabled: false
+  className: gce
+  host: agents.dev.example.com
+  annotations: {}
+
+secrets:
+  mongodb:
+    existingSecret: mongodb-conn
+  temporal:
+    existingSecret: temporal-conn
+  langfuse:
+    existingSecret: langfuse-conn
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
