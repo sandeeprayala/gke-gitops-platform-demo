@@ -1,6 +1,6 @@
 apiVersion: v2
 name: amex-library
-description: Shared AMEX standard templates for labels, probes, security context, and ingress conventions
+description: Shared helper templates and standards for platform charts
 type: library
 version: 0.1.0
-appVersion: "1.0"
+
