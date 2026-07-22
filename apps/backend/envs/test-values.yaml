@@ -1,25 +1,22 @@
-environment: test
-replicaCount: 2
+nameOverride: backend
 image:
-  digest: sha256:TEST_BACKEND_IMAGE_DIGEST
+  repository: us-central1-docker.pkg.dev/demo-project/app-images/backend
+  tag: test-approved
+replicaCount: 2
+service:
+  port: 8000
+ingress:
+  enabled: true
+  host: backend-test.example.com
 resources:
   requests:
-    cpu: 200m
+    cpu: 500m
     memory: 512Mi
   limits:
     cpu: 1000m
     memory: 1Gi
-autoscaling:
-  enabled: true
-  minReplicas: 2
-  maxReplicas: 4
-  targetCPUUtilizationPercentage: 70
-ingress:
-  enabled: false
-secrets:
-  mongodb:
-    existingSecret: mongodb-conn-test
-  temporal:
-    existingSecret: temporal-conn-test
-  langfuse:
-    existingSecret: langfuse-conn-test
+env:
+  APP_ENV: test
+  MONGODB_URI_SECRET: mongodb-uri
+  TEMPORAL_HOST: temporal-frontend.platform-test.svc.cluster.local:7233
+
